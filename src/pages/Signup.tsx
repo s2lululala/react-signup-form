@@ -17,6 +17,13 @@ function Signup() {
   const [passwordCheck, setPasswordCheck] = useState(false);
   const passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
+  const [userName, setUserName] = useState("");
+  const [isCheckedUserName, setIsCheckedUserName] = useState(false);
+  const [userNameCheck, setUserNameCheck] = useState(false);
+
+  const [recommender, setRecommender] = useState("");
+  const [isValidRecommender, setIsValidRecommender] = useState(false);
+
   function checkEmail() {
     console.log(`Email is ${email}`);
     setEmailCheck(true);
@@ -26,6 +33,18 @@ function Signup() {
     console.log(`Phone number is ${email}`);
     setPhoneCheck(true);
   }
+
+  function checkUserName() {
+    setIsCheckedUserName(true);
+    console.log(`User Name is ${userName}`);
+    setUserNameCheck(true);
+  }
+
+  function checkRecommender() {
+    console.log(`Recommender is ${userName}`);
+    setIsValidRecommender(true);
+  }
+
 
   return(
     <div>
@@ -78,7 +97,40 @@ function Signup() {
         </div>
       </div>
       <div>
-        <button disabled={emailCheck && phoneCheck && isValidPassword && passwordCheck? false : true}>제출</button>
+        유저네임*
+        <div>
+          <input
+            type="text"
+            value={userName}
+            onChange={(e) => {setUserName(e.target.value); setIsCheckedUserName(false)}}
+          />
+          <button disabled={isCheckedUserName ? true : false} onClick={checkUserName}>유저네임 중복확인</button>
+          {isCheckedUserName ? userNameCheck ? "사용 가능한 유저네임입니다" : "사용중인 유저네임입니다" : "중복확인을 해주세요"}
+        </div>
+      </div>
+      <div>
+        추천인 유저네임
+        <div>
+          <input
+            type="text"
+            value={recommender}
+            onChange={(e) => {setRecommender(e.target.value); setIsValidRecommender(false)}}
+          />
+          <button disabled={isValidRecommender ? true : false} onClick={checkRecommender}>추천인 확인</button>
+          {recommender && (isValidRecommender ? "추천인이 확인되었습니다" : "추천인이 확인되지 않았습니다")}
+        </div>
+      </div>
+      <div>
+        <button
+          disabled={
+            emailCheck && phoneCheck
+            && isValidPassword && passwordCheck
+            && isCheckedUserName && userNameCheck
+            && ((recommender && isValidRecommender) || !recommender)
+            ? false : true
+         }>
+          제출
+        </button>
       </div>
     </div>
   )
