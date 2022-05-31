@@ -24,6 +24,11 @@ function Signup() {
   const [recommender, setRecommender] = useState("");
   const [isValidRecommender, setIsValidRecommender] = useState(false);
 
+  const [term1, setTerm1] = useState(false);
+  const [term2, setTerm2] = useState(false);
+  const [marketing, setMarketing] = useState(false);
+  const [allTerms, setAllTerms] = useState(false);
+
   function checkEmail() {
     console.log(`Email is ${email}`);
     setEmailCheck(true);
@@ -43,6 +48,51 @@ function Signup() {
   function checkRecommender() {
     console.log(`Recommender is ${userName}`);
     setIsValidRecommender(true);
+  }
+
+  function handleAllTerms() {
+    if (allTerms) {
+      setAllTerms(false);
+      setTerm1(false);
+      setTerm2(false);
+      setMarketing(false);
+    }
+    else {
+      setAllTerms(true);
+      setTerm1(true);
+      setTerm2(true);
+      setMarketing(true);
+    }
+  }
+
+  function handleTerm1() {
+    setTerm1(!term1);
+    if (term2 && marketing) {
+      if (!term1)
+        setAllTerms(true);
+      else
+        setAllTerms(false);
+    }
+  }
+
+  function handleTerm2() {
+    setTerm2(!term2);
+    if (term1 && marketing) {
+      if (!term2)
+        setAllTerms(true);
+      else
+        setAllTerms(false);
+    }
+  }
+
+  function handleMarketing() {
+    setMarketing(!marketing);
+    if (term1 && term2) {
+      if (!marketing)
+        setAllTerms(true);
+      else
+        setAllTerms(false);
+    }
   }
 
 
@@ -121,12 +171,48 @@ function Signup() {
         </div>
       </div>
       <div>
+        약관 및 마케팅 동의
+        <div>
+          모두 동의
+          <input
+            type="checkbox"
+            checked={allTerms}
+            onChange={handleAllTerms}
+          />
+        </div>
+        <div>
+          약관 1*
+          <input
+            type="checkbox"
+            checked={term1}
+            onChange={handleTerm1}
+          />
+        </div>
+        <div>
+          약관2*
+          <input
+            type="checkbox"
+            checked={term2}
+            onChange={handleTerm2}
+          />
+        </div>
+        <div>
+          마켓팅동의
+          <input
+            type="checkbox"
+            checked={marketing}
+            onChange={handleMarketing}
+          />
+        </div>
+      </div>
+      <div>
         <button
           disabled={
             emailCheck && phoneCheck
             && isValidPassword && passwordCheck
             && isCheckedUserName && userNameCheck
             && ((recommender && isValidRecommender) || !recommender)
+            && term1 && term2
             ? false : true
          }>
           제출
