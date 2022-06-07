@@ -3,6 +3,7 @@ import Input from "../components/Input";
 import InputBox from "../components/InputBox";
 import validation from "../utils/validation";
 import checking from "../utils/checking";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [infos, setInfos] = useState({
@@ -62,8 +63,15 @@ function Signup() {
     }
   }
 
+  const navigate = useNavigate();
+
+  const handleSubmit = (e : any) => {
+    e.preventDefault();
+    navigate("/greeting");
+  }
+
   return(
-    <div>
+    <form onSubmit={handleSubmit}>
       <div>
         * 표시된 항목은 필수로 입력해야합니다
       </div>
@@ -174,7 +182,9 @@ function Signup() {
         </div>
       </div>
       <div>
-        <button
+        <input
+          type="submit"
+          value="제출"
           disabled={
             isCheckedInfos.email && isCheckedInfos.phone
             && isValidInfos.password && isCheckedInfos.password
@@ -183,11 +193,9 @@ function Signup() {
             && infos.term1 && infos.term2
             ? false : true
          }
-         >
-          제출
-        </button>
+         />
       </div>
-    </div>
+    </form>
   )
 }
 
