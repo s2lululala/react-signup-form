@@ -1,224 +1,201 @@
 import { useState } from "react";
+import Input from "../components/Input";
+import InputBox from "../components/InputBox";
+import validation from "../utils/validation";
+import checking from "../utils/checking";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
-  const [email, setEmail] = useState("");
-  const [isValidEmail, setIsValidEmail] = useState(false);
-  const [emailCheck, setEmailCheck] = useState(false);
-  const emailReg = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+  const [infos, setInfos] = useState({
+    email: "",
+    phone: "",
+    password: "",
+    repassword: "",
+    userName: "",
+    recommender: "",
+    allTerms: false,
+    term1: false,
+    term2: false,
+    marketing: false
+  });
 
-  const [phone, setPhone] = useState("");
-  const [isValidPhone, setIsValidPhone] = useState(false);
-  const [phoneCheck, setPhoneCheck] = useState(false);
-  const phoneReg = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+  const [isValidInfos, setIsValidInfos] = useState({
+    email: false,
+    phone: false,
+    password: false
+  });
 
-  const [password, setPassword] = useState("");
-  const [repassword, setRepassword] = useState("");
-  const [isValidPassword, setIsValidPassword] = useState(false);
-  const [passwordCheck, setPasswordCheck] = useState(false);
-  const passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+  const [isCheckedInfos, setIsCheckedInfos] = useState({
+    email: false,
+    phone: false,
+    password: false,
+    userName: false,
+    recommender: false
+  })
 
-  const [userName, setUserName] = useState("");
-  const [isCheckedUserName, setIsCheckedUserName] = useState(false);
-  const [userNameCheck, setUserNameCheck] = useState(false);
-
-  const [recommender, setRecommender] = useState("");
-  const [isValidRecommender, setIsValidRecommender] = useState(false);
-
-  const [term1, setTerm1] = useState(false);
-  const [term2, setTerm2] = useState(false);
-  const [marketing, setMarketing] = useState(false);
-  const [allTerms, setAllTerms] = useState(false);
-
-  function checkEmail() {
-    console.log(`Email is ${email}`);
-    setEmailCheck(true);
-  }
-
-  function checkPhone() {
-    console.log(`Phone number is ${email}`);
-    setPhoneCheck(true);
-  }
-
-  function checkUserName() {
-    setIsCheckedUserName(true);
-    console.log(`User Name is ${userName}`);
-    setUserNameCheck(true);
-  }
-
-  function checkRecommender() {
-    console.log(`Recommender is ${userName}`);
-    setIsValidRecommender(true);
-  }
-
-  function handleAllTerms() {
-    if (allTerms) {
-      setAllTerms(false);
-      setTerm1(false);
-      setTerm2(false);
-      setMarketing(false);
+  function handleChange(e : React.FormEvent<HTMLInputElement>) {
+    const validationList = ["email", "phone", "password"];
+    const checkedList = ["email", "phone", "userName", "recommender"]
+    const {id, value} = e.currentTarget;
+    setInfos({...infos, [id]: value});
+    if (validationList.includes(id) && !validation({id, value, isValidInfos, setIsValidInfos})) {
+      if (checkedList.includes(id))
+        setIsCheckedInfos({...isCheckedInfos, [id]: false})
+      return;
     }
-    else {
-      setAllTerms(true);
-      setTerm1(true);
-      setTerm2(true);
-      setMarketing(true);
+    if (id === "repassword")
+      infos.password === value ? setIsCheckedInfos({...isCheckedInfos, password: true}) : setIsCheckedInfos({...isCheckedInfos, password: false});
+    if (checkedList.includes(id))
+      checking({id, value, isCheckedInfos, setIsCheckedInfos})
+  }
+
+  const handleChangeInputBox = (e : React.FormEvent<HTMLInputElement>) => {
+    const {id, checked} = e.currentTarget;
+    if (id === "allTerms") {
+      setInfos({...infos, allTerms: checked, term1: checked, term2: checked, marketing: checked});
+    } else {
+        setInfos({...infos, [id]: checked})
+      if (!checked) {
+        setInfos({...infos, [id]: false, allTerms: false})
+      } else if ((infos.term1 && infos.term2) || (infos.term2 && infos.marketing) || (infos.term1 && infos.marketing)) {
+        setInfos({...infos, [id]: true, allTerms: true})
+      }
     }
   }
 
-  function handleTerm1() {
-    setTerm1(!term1);
-    if (term2 && marketing) {
-      if (!term1)
-        setAllTerms(true);
-      else
-        setAllTerms(false);
-    }
-  }
+  const navigate = useNavigate();
 
-  function handleTerm2() {
-    setTerm2(!term2);
-    if (term1 && marketing) {
-      if (!term2)
-        setAllTerms(true);
-      else
-        setAllTerms(false);
-    }
+  const handleSubmit = (e : any) => {
+    e.preventDefault();
+    navigate("/greeting");
   }
-
-  function handleMarketing() {
-    setMarketing(!marketing);
-    if (term1 && term2) {
-      if (!marketing)
-        setAllTerms(true);
-      else
-        setAllTerms(false);
-    }
-  }
-
 
   return(
-    <div>
+    <form onSubmit={handleSubmit}>
       <div>
         * 표시된 항목은 필수로 입력해야합니다
       </div>
       <div>
         이메일*
         <div>
-          <input
+          <Input
             type="text"
-            value={email}
-            onChange={(e) => {setEmail(e.target.value); emailReg.test(e.target.value) ? setIsValidEmail(true) : setIsValidEmail(false);}}
-            disabled={emailCheck ? true : false}
+            id="email"
+            value={infos.email}
+            onChange={handleChange}
           />
-          <button disabled={!emailCheck && isValidEmail ? false : true} onClick={checkEmail}>이메일 중복확인</button>
-          {isValidEmail ? emailCheck? "인증되었습니다" : "유효한 이메일입니다" : "유효하지 않은 이메일입니다"}
+          {isValidInfos.email ? isCheckedInfos.email ? "사용 가능한 이메일입니다" : "이미 사용중인 이메일입니다" : "유효하지 않은 이메일입니다"}
         </div>
       </div>
       <div>
         전화번호*
         <div>
-          <input
+          <Input
             type="text"
-            value={phone}
-            onChange={(e) => {setPhone(e.target.value); phoneReg.test(e.target.value) ? setIsValidPhone(true) : setIsValidPhone(false);}}
+            id="phone"
+            value={infos.phone}
+            onChange={handleChange}
           />
-          <button disabled={!phoneCheck && isValidPhone ? false : true} onClick={checkPhone}>전화번호 중복확인</button>
-          {isValidPhone ? phoneCheck? "확인되었습니다" : "유효한 전화번호입니다" : "유효하지 않은 전화번호입니다"}
+          {isValidInfos.phone ? isCheckedInfos.phone? "사용 가능한 전화번호입니다" : "이미 사용중인 전화번호입니다" : "유효하지 않은 전화번호입니다"}
         </div>
       </div>
       <div>
         비밀번호* (비밀번호는 8자 이상, 영문 대,소문자, 숫자를 포함해야합니다)
         <div>
-          <input
+          <Input
             type="password"
-            value={password}
-            onChange={(e) => {setPassword(e.target.value); passwordReg.test(e.target.value) ? setIsValidPassword(true) : setIsValidPassword(false); repassword === e.target.value ? setPasswordCheck(true) : setPasswordCheck(false);}}
+            id="password"
+            value={infos.password}
+            onChange={handleChange}
           />
-          {isValidPassword ? "" : "비밀번호 형식에 맞지 않습니다"}
+          {isValidInfos.password ? "" : "비밀번호 형식에 맞지 않습니다"}
         </div>
         비밀번호 확인*
         <div>
-          <input
+          <Input
             type="password"
-            value={repassword}
-            onChange={(e) => {setRepassword(e.target.value); password === e.target.value ? setPasswordCheck(true) : setPasswordCheck(false);}}
+            id="repassword"
+            value={infos.repassword}
+            onChange={handleChange}
           />
-          {passwordCheck ? "" : "비밀번호가 일치하지 않습니다"}
+          {isCheckedInfos.password ? "" : "비밀번호가 일치하지 않습니다"}
         </div>
       </div>
       <div>
         유저네임*
         <div>
-          <input
+          <Input
             type="text"
-            value={userName}
-            onChange={(e) => {setUserName(e.target.value); setIsCheckedUserName(false)}}
+            id="userName"
+            value={infos.userName}
+            onChange={handleChange}
           />
-          <button disabled={isCheckedUserName ? true : false} onClick={checkUserName}>유저네임 중복확인</button>
-          {isCheckedUserName ? userNameCheck ? "사용 가능한 유저네임입니다" : "사용중인 유저네임입니다" : "중복확인을 해주세요"}
+          {isCheckedInfos.userName ? "사용 가능한 유저네임입니다" : "사용중인 유저네임입니다"}
         </div>
       </div>
       <div>
         추천인 유저네임
         <div>
-          <input
+          <Input
             type="text"
-            value={recommender}
-            onChange={(e) => {setRecommender(e.target.value); setIsValidRecommender(false)}}
+            id="recommender"
+            value={infos.recommender}
+            onChange={handleChange}
           />
-          <button disabled={isValidRecommender ? true : false} onClick={checkRecommender}>추천인 확인</button>
-          {recommender && (isValidRecommender ? "추천인이 확인되었습니다" : "추천인이 확인되지 않았습니다")}
+          {infos.recommender && (isCheckedInfos.recommender ? "추천인이 확인되었습니다" : "추천인이 확인되지 않았습니다")}
         </div>
       </div>
       <div>
-        약관 및 마케팅 동의
+        약관 및 마켓팅 동의
         <div>
           모두 동의
-          <input
-            type="checkbox"
-            checked={allTerms}
-            onChange={handleAllTerms}
+          <InputBox
+            id="allTerms"
+            checked={infos.allTerms}
+            onChange={handleChangeInputBox}
           />
+
         </div>
         <div>
           약관 1*
-          <input
-            type="checkbox"
-            checked={term1}
-            onChange={handleTerm1}
+          <InputBox
+            id="term1"
+            checked={infos.term1}
+            onChange={handleChangeInputBox}
           />
         </div>
         <div>
           약관2*
-          <input
-            type="checkbox"
-            checked={term2}
-            onChange={handleTerm2}
+          <InputBox
+            id="term2"
+            checked={infos.term2}
+            onChange={handleChangeInputBox}
           />
         </div>
         <div>
           마켓팅동의
-          <input
-            type="checkbox"
-            checked={marketing}
-            onChange={handleMarketing}
+          <InputBox
+            id="marketing"
+            checked={infos.marketing}
+            onChange={handleChangeInputBox}
           />
         </div>
       </div>
       <div>
-        <button
+        <input
+          type="submit"
+          value="제출"
           disabled={
-            emailCheck && phoneCheck
-            && isValidPassword && passwordCheck
-            && isCheckedUserName && userNameCheck
-            && ((recommender && isValidRecommender) || !recommender)
-            && term1 && term2
+            isCheckedInfos.email && isCheckedInfos.phone
+            && isValidInfos.password && isCheckedInfos.password
+            && isCheckedInfos.userName
+            && ((infos.recommender && isCheckedInfos.recommender) || !infos.recommender)
+            && infos.term1 && infos.term2
             ? false : true
-         }>
-          제출
-        </button>
+         }
+         />
       </div>
-    </div>
+    </form>
   )
 }
 
