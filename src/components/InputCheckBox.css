@@ -1,0 +1,14 @@
+.inputCheckBox {
+  width: 100%;
+  height: 100%;
+}
+
+.inputCheckBox__title {
+  font-size: medium;
+  font-weight: 500;
+  color: rgb(144, 140, 216);
+}
+
+.inputCheckBox__title__required {
+  color: rgb(89, 83, 209);
+}

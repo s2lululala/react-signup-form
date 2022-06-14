@@ -5,7 +5,7 @@ type validationProps = {
   setIsValidInfos: any;
 }
 
-const validation = ({id, value, isValidInfos, setIsValidInfos} : validationProps) => {
+const validateFormInfos = ({id, value, isValidInfos, setIsValidInfos} : validationProps) => {
   const emailReg = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
   const phoneReg = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
   const passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
@@ -22,4 +22,4 @@ const validation = ({id, value, isValidInfos, setIsValidInfos} : validationProps
   }
 }
 
-export default validation;
+export default validateFormInfos;

@@ -1,11 +1,19 @@
 import { Link } from "react-router-dom";
+import './Greeting.css';
 
 const Greeting = () => {
   return(
-    <>
-      <h1>Have a nice day!</h1>
-      <Link to="/">Home</Link>
-    </>
+    <div className="greeting">
+      <div className="greeting__title">
+        Have a nice day!
+      </div>
+      <div className="greeting__link">
+        <Link to="/" className="greeting__link__text">
+          Home
+        </Link>
+      </div>
+
+    </div>
   )
 }
 

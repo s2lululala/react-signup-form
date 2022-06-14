@@ -1,0 +1,30 @@
+.inputBox {
+  width: 100%;
+  height: 100%;
+  margin: 0.1rem 0;
+}
+
+.inputBox__title {
+  font-size: medium;
+  font-weight: 500;
+  color: rgb(144, 140, 216);
+}
+
+.inputBox__title__required {
+  color: rgb(89, 83, 209);
+}
+
+.inputBox__input {
+  font-size: medium;
+  padding: 0.5rem;
+  margin: 0.2rem 0;
+  width: 100%;
+  border-color: rgb(144, 140, 216);
+  border-radius: 8px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.inputBox__input:focus {
+  outline: none;
+}
