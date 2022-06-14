@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Input from "../components/Input";
 import InputBox from "../components/InputBox";
-import validation from "../utils/validation";
+import validateFormInfos from "../utils/validation";
 import checking from "../utils/checking";
 import { useNavigate } from "react-router-dom";
 
@@ -14,8 +14,8 @@ function Signup() {
     userName: "",
     recommender: "",
     allTerms: false,
-    term1: false,
-    term2: false,
+    term: false,
+    privacy: false,
     marketing: false
   });
 
@@ -38,7 +38,7 @@ function Signup() {
     const checkedList = ["email", "phone", "userName", "recommender"]
     const {id, value} = e.currentTarget;
     setInfos({...infos, [id]: value});
-    if (validationList.includes(id) && !validation({id, value, isValidInfos, setIsValidInfos})) {
+    if (validationList.includes(id) && !validateFormInfos({id, value, isValidInfos, setIsValidInfos})) {
       if (checkedList.includes(id))
         setIsCheckedInfos({...isCheckedInfos, [id]: false})
       return;
@@ -52,12 +52,12 @@ function Signup() {
   const handleChangeInputBox = (e : React.FormEvent<HTMLInputElement>) => {
     const {id, checked} = e.currentTarget;
     if (id === "allTerms") {
-      setInfos({...infos, allTerms: checked, term1: checked, term2: checked, marketing: checked});
+      setInfos({...infos, allTerms: checked, term: checked, privacy: checked, marketing: checked});
     } else {
         setInfos({...infos, [id]: checked})
       if (!checked) {
         setInfos({...infos, [id]: false, allTerms: false})
-      } else if ((infos.term1 && infos.term2) || (infos.term2 && infos.marketing) || (infos.term1 && infos.marketing)) {
+      } else if ((infos.term && infos.privacy) || (infos.privacy && infos.marketing) || (infos.term && infos.marketing)) {
         setInfos({...infos, [id]: true, allTerms: true})
       }
     }
@@ -65,7 +65,7 @@ function Signup() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e : any) => {
+  const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     navigate("/greeting");
   }
@@ -146,7 +146,7 @@ function Signup() {
         </div>
       </div>
       <div>
-        약관 및 마켓팅 동의
+        약관 및 마케팅 동의
         <div>
           모두 동의
           <InputBox
@@ -157,23 +157,23 @@ function Signup() {
 
         </div>
         <div>
-          약관 1*
+          약관*
           <InputBox
-            id="term1"
-            checked={infos.term1}
+            id="term"
+            checked={infos.term}
             onChange={handleChangeInputBox}
           />
         </div>
         <div>
-          약관2*
+          개인정보활용동의*
           <InputBox
-            id="term2"
-            checked={infos.term2}
+            id="privacy"
+            checked={infos.privacy}
             onChange={handleChangeInputBox}
           />
         </div>
         <div>
-          마켓팅동의
+          마케팅동의
           <InputBox
             id="marketing"
             checked={infos.marketing}
@@ -190,7 +190,7 @@ function Signup() {
             && isValidInfos.password && isCheckedInfos.password
             && isCheckedInfos.userName
             && ((infos.recommender && isCheckedInfos.recommender) || !infos.recommender)
-            && infos.term1 && infos.term2
+            && infos.term && infos.privacy
             ? false : true
          }
          />
