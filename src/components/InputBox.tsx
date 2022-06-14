@@ -1,19 +1,28 @@
+import './InputBox.css';
+
 type InputBoxProps = {
+  type: string;
   id: string;
-  checked: boolean;
-  onChange: any;
+  value: string;
+  onChange: (e : React.FormEvent<HTMLInputElement>) => void;
+  label: string;
+  required: boolean;
 }
 
-const InputBox = ({id, checked, onChange}: InputBoxProps) => {
+const InputBox = ({type, id, value, onChange, label, required}: InputBoxProps) => {
   return (
-    <>
+    <div className='inputBox'>
+      <div className={required ? 'inputBox__title inputBox__title__required' : 'inputBox__title'}>
+        {label}{required && '*'}
+      </div>
       <input
-        type="checkbox"
+        className='inputBox__input'
+        type={type}
         id={id}
-        checked={checked}
+        value={value}
         onChange={onChange}
         />
-    </>
+    </div>
   )
 }
 
